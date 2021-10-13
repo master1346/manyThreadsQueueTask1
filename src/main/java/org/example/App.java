@@ -35,8 +35,9 @@ public class App
             }catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            answerCall.start();
-
+            if(!(callCenter.clientCallCenter.isEmpty())) {
+                answerCall.start();
+            }
         });
 
         mainThread.start();
