@@ -3,12 +3,11 @@ package org.example;
 public class App 
 {
     public static void main(String[] args) {
-
         CallCenter callCenter = new CallCenter();
 
         Thread mainThread = new Thread(() -> {
             Thread incomingCAll = new Thread(() -> {
-                for (int i = 1; i < 40; i++) {
+                for (int i = 1; i < 20; i++) {
                     callCenter.addCall(i);
                     try {
                         Thread.sleep(1000);
@@ -16,10 +15,11 @@ public class App
                         e.printStackTrace();
                     }
                 }
+                callCenter.editCycle();
             });
 
             Thread answerCall = new Thread(() -> {
-                while(!(callCenter.clientCallCenter.isEmpty())) {
+                while(callCenter.cycle || !(callCenter.clientCallCenter.isEmpty())) {
                     callCenter.getCall();
                     try {
                         Thread.sleep(3000);
@@ -35,9 +35,7 @@ public class App
             }catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if(!(callCenter.clientCallCenter.isEmpty())) {
                 answerCall.start();
-            }
         });
 
         mainThread.start();
