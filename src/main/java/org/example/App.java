@@ -1,43 +1,17 @@
 package org.example;
 
-public class App 
+import java.util.concurrent.LinkedBlockingQueue;
+
+public class App
 {
     public static void main(String[] args) {
-        CallCenter callCenter = new CallCenter();
+    LinkedBlockingQueue<Integer> callCenter = new LinkedBlockingQueue<>();
 
-        Thread mainThread = new Thread(() -> {
-            Thread incomingCAll = new Thread(() -> {
-                for (int i = 1; i < 20; i++) {
-                    callCenter.addCall(i);
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                callCenter.editCycle();
-            });
+    IncomingCalls incomingCalls = new IncomingCalls(callCenter);
+    AnswerCallCenter answerCallCenter = new AnswerCallCenter(callCenter);
 
-            Thread answerCall = new Thread(() -> {
-                while(callCenter.cycle || !(callCenter.clientCallCenter.isEmpty())) {
-                    callCenter.getCall();
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+        (new Thread(incomingCalls)).start();
+        (new Thread(answerCallCenter)).start();
 
-            incomingCAll.start();
-            try {
-                Thread.sleep(2000);
-            }catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-                answerCall.start();
-        });
-
-        mainThread.start();
     }
 }
